@@ -1,0 +1,86 @@
+#include <iostream>
+#include <algorithm>
+#include <stack>
+#include <map>
+using namespace std;
+//e = E'
+//t = T'
+// 空 = $
+
+string str;
+string LL[10][10]={{"Te","","","Te","",""},
+                   {"","+Te","","","$","$"},
+                   {"Ft","","","Ft","",""},
+                   {"","$","*Ft","","$","$"},
+                   {"i","","","(E)","",""}};
+
+map<char,int> col;
+map<char,int> rol;
+stack<char> sta;
+void init()
+{
+    col['E']=0;
+    col['e']=1;
+    col['T']=2;
+    col['t']=3;
+    col['F']=4;
+
+    rol['i']=0;
+    rol['+']=1;
+    rol['*']=2;
+    rol['(']=3;
+    rol[')']=4;
+    rol['#']=5;
+
+}
+
+int main()
+{
+    //i+i*i#
+    init();
+    cout << "请输入tokrn（以#结尾）：" <<endl;
+    cin >> str;
+    sta.push('#');
+    sta.push('E');
+    int cnt=0,ind_str=0;
+    while(!sta.empty())
+    {
+        char token_sta = sta.top();
+        char token_str = str[ind_str];
+        string p = LL[col[token_sta]][rol[token_str]];
+        cout << " token_sta: " << token_sta << " " << " token_str: " << token_str << " p: " << p << endl;
+        if(token_sta==token_str)// match
+        {
+            cout << "match: " << token_sta << " " << token_str << endl;
+            sta.pop();
+            ind_str++;
+        }
+        else if(p!=""&&p!="$")//正常推导
+        {
+            cout << "p: " << p << endl;
+            sta.pop();
+            for(int i=p.length()-1;i>=0;i--)
+            {
+                sta.push(p[i]);
+                //cout << "sta.push: " << p[i] << " ";
+            }
+            cout <<endl;
+        }
+        else if(p=="$")// 空串
+        {
+            cout << "null $" <<endl;
+            sta.pop();
+        }
+        else if(p=="")
+        {
+            cout << "error : " << " token_sta: " << token_sta << " " << " token_str: " << token_str << " p: " << p << endl;
+            exit(0);
+        }
+    }
+    //cout << "sta.size: " << sta.size() << " " << "str.length: " << str.length() << " " << "ind_str: " << ind_str << endl;
+    if(sta.size()==0&&str.length()==ind_str)
+        cout << "acc" << endl;
+    else
+        cout << "NO" << endl;
+    return 0;
+}
